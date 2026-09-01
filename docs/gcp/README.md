@@ -4,6 +4,26 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
+## 📋 GCP Resource Inventory & Architecture Reference
+
+Before deploying, review all 15+ GCP resources provisioned via Terraform:
+
+| Resource Name / Type | GCP Service | SKU / Tier | Purpose & Description | Multi-Region Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `google_compute_network` | VPC Network | `10.0.0.0/20` | Custom VPC & Subnetworks for Cloud Run & DB | Regional Subnets per Region |
+| `google_compute_global_forwarding_rule` | Global Load Balancer | Global External | Anycast HTTP(S) Load Balancer & WAF Armor | **Global Anycast Service** |
+| `google_vpc_access_connector` | VPC Access Connector | e2-micro | Serverless VPC Access Connector for Cloud Run | Regional Connector |
+| `google_cloud_run_v2_service` (x8) | Cloud Run | Serverless Revisions | 8 Microservices Containers (`api-gateway`, `auth`, etc.) | Primary (`us-central1`) / Secondary (`europe-west1`) |
+| `google_sql_database_instance` | Cloud SQL PostgreSQL | `db-custom-2-7680` | Primary PostgreSQL 15 Database (`foodlens_db`) | Primary Write Node (`us-central1`) |
+| `google_sql_database_instance` (Replica) | Cloud SQL Replica | `db-custom-2-7680` | Async Cross-Region Read Replica Database | Failover Read Replica (`europe-west1`) |
+| `google_redis_instance` | Memorystore Redis | `BASIC` Tier | Fast Nutrition Facts & Video Caching Layer | Active Instances per Region |
+| `google_storage_bucket` | Cloud Storage (GCS) | Multi-Region | Food Image Storage Bucket (`NAM4` / `EU`) | Dual-Region / Multi-Region Sync |
+| `google_artifact_registry_repository` | Artifact Registry | Docker Repo | Central Container Image Repository | Multi-Region Image Replication |
+| `google_secret_manager_secret` | Secret Manager | Standard | Key Vault Secrets for DB passwords & JWT secrets | Global Secret Access |
+| `google_logging_project_sink` | Cloud Operations | Standard | Centralized Container Logs & Metrics Sinks | Global Operations Sink |
+
+---
+
 ## 🗺️ Step-by-Step Documentation Index (0 - 13)
 
 0. [00 - GCP Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.

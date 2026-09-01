@@ -4,6 +4,28 @@ This document contains full multi-region architectural specifications, component
 
 ---
 
+## 📋 Azure Resource Inventory & Architecture Reference
+
+Before deploying, review all 25+ Azure resources provisioned via Terraform:
+
+| Resource Name / Type | Azure Service | SKU / Tier | Purpose & Description | Multi-Region Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `azurerm_resource_group` | Resource Group | Standard | Logical container (`foodlens-dev-rg`) | Primary (`eastus`) / Secondary (`westeurope`) |
+| `azurerm_virtual_network` | Virtual Network (VNet) | `10.0.0.0/16` | VNet & Delegated Subnets (ACA: `/21`, DB: `/24`) | Regional Subnets per Region |
+| `azurerm_cdn_frontdoor_profile` | Azure Front Door | Standard | Global Anycast Router, Latency Failover & WAF | **Global Anycast Service** |
+| `azurerm_api_management` | API Management (APIM) | `Consumption_0` | Serverless API Facade, Rate Limiting (100 req/min) & CORS | Primary & Secondary Facades |
+| `azurerm_container_app_environment` | Container Apps Env | Managed VNet | Serverless Container Runtime Environment | Deployed in Both Regions |
+| `azurerm_container_app` (x8) | Container Apps | Dynamic Serverless | 8 Microservices (`api-gateway`, `auth`, `image`, etc.) | Active Mesh (`eastus`) / Failover Mesh |
+| `azurerm_postgresql_flexible_server` | PostgreSQL Flex | `Standard_B1ms` | Primary PostgreSQL 15 Database (`foodlens_db`) | Primary Write Node (`eastus`) |
+| `azurerm_postgresql_flexible_server_replica` | PostgreSQL Replica | `Standard_B1ms` | Async Cross-Region Read Replica Database | Failover Read Replica (`westeurope`) |
+| `azurerm_redis_cache` | Azure Cache for Redis | `Basic C0` | Fast Nutrition & Recipe Video Caching Layer | Active Instances per Region |
+| `azurerm_storage_account` | Blob Storage | `Standard RA-GRS` | Food Image Uploads (`uploads` container) | Geo-Redundant Storage (RA-GRS) |
+| `azurerm_container_registry` | ACR | Premium | Container Image Registry (`foodlensdevacr`) | Geo-Replicated Registry |
+| `azurerm_key_vault` | Key Vault | Standard | Secret Management (`foodlensdevkv` for JWT & Passwords) | Replicated Vault Secrets |
+| `azurerm_log_analytics_workspace` | Log Analytics | PerGB2018 | Centralized Container Logs & Insights (`foodlens-dev-law`) | Unified Analytics Log Sink |
+
+---
+
 ## 🏗️ 1. Azure Multi-Region Architecture Diagram
 
 ```mermaid

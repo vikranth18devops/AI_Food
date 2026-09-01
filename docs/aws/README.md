@@ -4,6 +4,28 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
+## 📋 AWS Resource Inventory & Architecture Reference
+
+Before deploying, review all 20+ AWS resources provisioned via Terraform:
+
+| Resource Name / Type | AWS Service | SKU / Tier | Purpose & Description | Multi-Region Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `aws_vpc` | VPC & Networking | `10.0.0.0/16` | Custom VPC & Public/Private Subnets across 2 AZs | Regional VPC per Region |
+| `aws_route53_record` | Route 53 | Anycast DNS | Latency-Based Routing & Global Health Probes | **Global Anycast Service** |
+| `aws_lb` | Application Load Balancer | ALB Standard | External HTTPS Ingress & Listener Rules | Regional ALB per Region |
+| `aws_ecs_cluster` | ECS Fargate Cluster | Serverless Compute | Container Cluster (`foodlens-dev-cluster`) | Primary (`us-east-1`) / Secondary (`us-west-2`) |
+| `aws_ecs_task_definition` (x8) | ECS Task Defs | Fargate 0.25 vCPU | 8 Microservices Container Definitions | Dual-Region Deployment |
+| `aws_ecs_service` (x8) | ECS Services | Fargate Launch | Auto-scaling microservices task instances | Primary Mesh / Failover Mesh |
+| `aws_db_instance` | RDS PostgreSQL | `db.t4g.micro` | Primary PostgreSQL 15 Database (`foodlens_db`) | Primary Write Node (`us-east-1`) |
+| `aws_db_instance` (Replica) | RDS Read Replica | `db.t4g.micro` | Async Cross-Region Read Replica Database | Failover Read Replica (`us-west-2`) |
+| `aws_elasticache_cluster` | ElastiCache Redis | `cache.t4g.micro` | Nutrition Facts & Recipe Video Cache Layer | Active Instances per Region |
+| `aws_s3_bucket` | S3 Object Storage | Standard CRR | Food Image Uploads (`foodlens-dev-uploads`) | Cross-Region Replication (CRR) |
+| `aws_ecr_repository` (x8) | ECR Repositories | Private ECR | Image Repositories for 8 microservices | Cross-Region Replication Enabled |
+| `aws_secretsmanager_secret` | Secrets Manager | Standard | Key Vault Secrets for DB passwords & JWT secrets | Replicated Secrets |
+| `aws_cloudwatch_log_group` | CloudWatch Logs | Standard | Centralized Container Logs & Metric Alarms | Regional Log Streams |
+
+---
+
 ## 🗺️ Step-by-Step Documentation Index (0 - 13)
 
 0. [00 - AWS Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.
