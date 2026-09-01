@@ -4,26 +4,24 @@ This document contains full multi-region architectural specifications, component
 
 ---
 
-## 📋 Azure Resource Inventory & Architecture Reference
+## 📋 Azure Resource Inventory & Cost / Pricing Reference
 
-Before deploying, review all 25+ Azure resources provisioned via Terraform:
+Below is the complete resource inventory and estimated operational cost breakdown based on Azure Standard Pay-As-You-Go pricing (East US & West Europe DR):
 
-| Resource Name / Type | Azure Service | SKU / Tier | Purpose & Description | Multi-Region Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `azurerm_resource_group` | Resource Group | Standard | Logical container (`foodlens-dev-rg`) | Primary (`eastus`) / Secondary (`westeurope`) |
-| `azurerm_virtual_network` | Virtual Network (VNet) | `10.0.0.0/16` | VNet & Delegated Subnets (ACA: `/21`, DB: `/24`) | Regional Subnets per Region |
-| `azurerm_cdn_frontdoor_profile` | Azure Front Door | Standard | Global Anycast Router, Latency Failover & WAF | **Global Anycast Service** |
-| `azurerm_api_management` | API Management (APIM) | `Consumption_0` | Serverless API Facade, Rate Limiting (100 req/min) & CORS | Primary & Secondary Facades |
-| `azurerm_container_app_environment` | Container Apps Env | Managed VNet | Serverless Container Runtime Environment | Deployed in Both Regions |
-| `azurerm_container_app` (x8) | Container Apps | Dynamic Serverless | 8 Microservices (`api-gateway`, `auth`, `image`, etc.) | Active Mesh (`eastus`) / Failover Mesh |
-| `azurerm_postgresql_flexible_server` | PostgreSQL Flex | `Standard_B1ms` | Primary PostgreSQL 15 Database (`foodlens_db`) | Primary Write Node (`eastus`) |
-| `azurerm_postgresql_flexible_server_replica` | PostgreSQL Replica | `Standard_B1ms` | Async Cross-Region Read Replica Database | Failover Read Replica (`westeurope`) |
-| `azurerm_redis_cache` | Azure Cache for Redis | `Basic C0` | Fast Nutrition & Recipe Video Caching Layer | Active Instances per Region |
-| `azurerm_storage_account` | Blob Storage | `Standard RA-GRS` | Food Image Uploads (`uploads` container) | Geo-Redundant Storage (RA-GRS) |
-| `azurerm_container_registry` | ACR | Premium | Container Image Registry (`foodlensdevacr`) | Geo-Replicated Registry |
-| `azurerm_key_vault` | Key Vault | Standard | Secret Management (`foodlensdevkv` for JWT & Passwords) | Replicated Vault Secrets |
-| `azurerm_monitor_metric_alert` (x4) | Azure Monitor Alerts | SRE Metric Rules | P1/P2 Golden Signals Alerts (CPU, Memory, 5xx Errors) | Multi-Region Metric Alerts |
-| `azurerm_log_analytics_workspace` | Log Analytics | PerGB2018 | Centralized Container Logs & Insights (`foodlens-dev-law`) | Unified Analytics Log Sink |
+| Resource Name / Type | Azure Service | SKU / Tier | 1 Hr Usage | 1 Day (24h) | 1 Week (168h) | 1 Month (730h) | Purpose & Description |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `azurerm_cdn_frontdoor_profile` | Azure Front Door | Standard | `$0.047` | `$1.13` | `$7.90` | `$34.30` | Global Anycast Router, Latency Failover & WAF |
+| `azurerm_api_management` | API Management (APIM) | `Consumption_0` | `$0.000` | `$0.00` | `$0.00` | `$0.00` | Serverless API Facade (1M free calls/mo) |
+| `azurerm_container_app` (x8) | Container Apps (ACA) | Serverless | `$0.015` | `$0.36` | `$2.52` | `$10.95` | 8 Microservices Mesh (`api-gateway`, `auth`, etc.) |
+| `azurerm_postgresql_flexible_server` | PostgreSQL Primary | `Standard_B1ms` | `$0.047` | `$1.13` | `$7.89` | `$34.05` | Primary PostgreSQL 15 Database (`eastus`) |
+| `azurerm_postgresql_flexible_server_replica` | PostgreSQL Replica | `Standard_B1ms` | `$0.047` | `$1.13` | `$7.89` | `$34.05` | Read Replica Database (`westeurope`) |
+| `azurerm_redis_cache` | Azure Cache for Redis | `Basic C0` | `$0.022` | `$0.53` | `$3.70` | `$16.06` | Nutrition & Recipe Video Cache Layer |
+| `azurerm_storage_account` | Blob Storage | `Standard RA-GRS` | `$0.003` | `$0.08` | `$0.54` | `$2.30` | Food Image Storage (50GB Geo-Redundant) |
+| `azurerm_container_registry` | ACR Registry | Premium Geo-Rep | `$0.068` | `$1.67` | `$11.69` | `$50.00` | Geo-Replicated Private Image Registry |
+| `azurerm_key_vault` | Key Vault | Standard | `$0.0004` | `$0.01` | `$0.07` | `$0.30` | Secret Management (JWT & DB Passwords) |
+| `azurerm_monitor_metric_alert` (x4) | Azure Monitor Alerts | SRE Metric Rules | `$0.0005` | `$0.01` | `$0.09` | `$0.40` | P1/P2 Golden Signals Metric Alerts |
+| `azurerm_log_analytics_workspace` | Log Analytics | PerGB2018 | `$0.005` | `$0.12` | `$0.84` | `$3.65` | Centralized Log Workspace (5GB/mo free) |
+| **TOTAL ESTIMATED COST** | **Azure Environment** | **Multi-Region** | **`~$0.25`** | **`~$6.17`** | **`~$43.13`** | **`~$186.06`** | **Complete Azure Infrastructure Total** |
 
 ---
 
@@ -201,5 +199,5 @@ flowchart TD
 11. [11 - One-Click ACA Deployment Script](11-one-click-aca-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - Azure Multi-Region Active-Active Architecture](12-multi-region-failover.md): Azure Front Door global routing and PostgreSQL Read Replicas.
 13. [13 - Azure API Management (APIM) Integration](13-api-management-apim.md): APIM gateway facade, rate limiting policies, and developer portal.
-14. [14 - Real-Time Disaster Recovery Failover & Failback Runbook](14-realtime-failover-runbook.md): Operational runbook for live Azure region failover and failback.
+14. [14 - Real-Time Disaster Recovery Failover & Failback Runbook](14-realtime-failover-runbook.md): Step-by-step operational runbook for live Azure region failover and failback.
 15. [15 - Azure SRE Alert Incident Response Runbook](15-sre-alert-incident-runbook.md): SRE operational triage, diagnostic CLI commands, and remediation steps for Azure Monitor metric alerts.

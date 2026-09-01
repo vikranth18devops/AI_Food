@@ -4,26 +4,23 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
-## 📋 AWS Resource Inventory & Architecture Reference
+## 📋 AWS Resource Inventory & Cost / Pricing Reference
 
-Before deploying, review all 20+ AWS resources provisioned via Terraform:
+Below is the complete resource inventory and estimated operational cost breakdown based on AWS Standard Pay-As-You-Go pricing (us-east-1 & us-west-2 DR):
 
-| Resource Name / Type | AWS Service | SKU / Tier | Purpose & Description | Multi-Region Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `aws_vpc` | VPC & Networking | `10.0.0.0/16` | Custom VPC & Public/Private Subnets across 2 AZs | Regional VPC per Region |
-| `aws_route53_record` | Route 53 | Anycast DNS | Latency-Based Routing & Global Health Probes | **Global Anycast Service** |
-| `aws_lb` | Application Load Balancer | ALB Standard | External HTTPS Ingress & Listener Rules | Regional ALB per Region |
-| `aws_ecs_cluster` | ECS Fargate Cluster | Serverless Compute | Container Cluster (`foodlens-dev-cluster`) | Primary (`us-east-1`) / Secondary (`us-west-2`) |
-| `aws_ecs_task_definition` (x8) | ECS Task Defs | Fargate 0.25 vCPU | 8 Microservices Container Definitions | Dual-Region Deployment |
-| `aws_ecs_service` (x8) | ECS Services | Fargate Launch | Auto-scaling microservices task instances | Primary Mesh / Failover Mesh |
-| `aws_db_instance` | RDS PostgreSQL | `db.t4g.micro` | Primary PostgreSQL 15 Database (`foodlens_db`) | Primary Write Node (`us-east-1`) |
-| `aws_db_instance` (Replica) | RDS Read Replica | `db.t4g.micro` | Async Cross-Region Read Replica Database | Failover Read Replica (`us-west-2`) |
-| `aws_elasticache_cluster` | ElastiCache Redis | `cache.t4g.micro` | Nutrition Facts & Recipe Video Cache Layer | Active Instances per Region |
-| `aws_s3_bucket` | S3 Object Storage | Standard CRR | Food Image Uploads (`foodlens-dev-uploads`) | Cross-Region Replication (CRR) |
-| `aws_ecr_repository` (x8) | ECR Repositories | Private ECR | Image Repositories for 8 microservices | Cross-Region Replication Enabled |
-| `aws_cloudwatch_metric_alarm` (x3) | CloudWatch Alarms | SRE Metric Rules | P1/P2 Golden Signals Alarms (CPU, Free Storage, 5xx Errors) | Multi-Region Metric Alarms |
-| `aws_secretsmanager_secret` | Secrets Manager | Standard | Key Vault Secrets for DB passwords & JWT secrets | Replicated Secrets |
-| `aws_cloudwatch_log_group` | CloudWatch Logs | Standard | Centralized Container Logs & Metric Alarms | Regional Log Streams |
+| Resource Name / Type | AWS Service | SKU / Tier | 1 Hr Usage | 1 Day (24h) | 1 Week (168h) | 1 Month (730h) | Purpose & Description |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `aws_route53_record` | Route 53 | Anycast DNS | `$0.001` | `$0.02` | `$0.13` | `$0.60` | Latency-Based Routing & Global Health Probes |
+| `aws_lb` | Application Load Balancer | ALB Standard | `$0.025` | `$0.60` | `$4.20` | `$18.25` | External HTTPS Ingress & Listener Rules |
+| `aws_ecs_cluster` / `service` | ECS Fargate | Serverless | `$0.051` | `$1.22` | `$8.57` | `$37.23` | 8 Microservices Containers (2 vCPU / 4GB RAM) |
+| `aws_db_instance` | RDS PostgreSQL Primary | `db.t4g.micro` | `$0.021` | `$0.50` | `$3.53` | `$15.33` | Primary PostgreSQL 15 Database (`us-east-1`) |
+| `aws_db_instance` (Replica) | RDS Read Replica | `db.t4g.micro` | `$0.021` | `$0.50` | `$3.53` | `$15.33` | Async Cross-Region Read Replica (`us-west-2`) |
+| `aws_elasticache_cluster` | ElastiCache Redis | `cache.t4g.micro` | `$0.017` | `$0.41` | `$2.86` | `$12.41` | Nutrition Facts & Recipe Video Cache Layer |
+| `aws_s3_bucket` | S3 Object Storage | Standard CRR | `$0.003` | `$0.07` | `$0.50` | `$2.20` | Food Image Uploads (50GB Cross-Region Rep) |
+| `aws_ecr_repository` | ECR Repositories | Private ECR | `$0.001` | `$0.03` | `$0.23` | `$1.00` | Private Container Image Repositories (10GB) |
+| `aws_secretsmanager_secret` | Secrets Manager | Standard | `$0.002` | `$0.05` | `$0.37` | `$1.60` | Key Vault Secrets (DB Passwords & JWT Tokens) |
+| `aws_cloudwatch_metric_alarm` | CloudWatch Alarms | SRE Metric Rules | `$0.005` | `$0.12` | `$0.84` | `$3.65` | P1/P2 Golden Signals Metric Alarms & Logs |
+| **TOTAL ESTIMATED COST** | **AWS Environment** | **Multi-Region** | **`~$0.15`** | **`~$3.52`** | **`~$24.76`** | **`~$107.60`** | **Complete AWS Infrastructure Total** |
 
 ---
 
