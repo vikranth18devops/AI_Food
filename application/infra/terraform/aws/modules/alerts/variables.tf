@@ -11,8 +11,9 @@ variable "environment" {
 variable "sre_email" {
   type        = string
   description = "SRE On-Call Email"
-  default     = "sre-oncall@foodlens.example.com"
+  default     = "vikranth.devops18@gmail.com"
 }
+
 
 variable "db_instance_id" {
   type        = string
