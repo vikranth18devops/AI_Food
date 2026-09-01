@@ -4,23 +4,23 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
-## 📋 AWS Resource Inventory & Cost / Pricing Reference
+## 📋 AWS Resource Inventory & Cost Reference
 
-Below is the complete resource inventory and estimated operational cost breakdown with service icons based on AWS Standard Pay-As-You-Go pricing (us-east-1 & us-west-2 DR):
+Below is the compact, single-screen resource inventory and estimated operational cost breakdown (Pay-As-You-Go pricing for `us-east-1` Primary & `us-west-2` DR):
 
-| Resource Name / Type | AWS Service | SKU / Tier | 1 Hr Usage | 1 Day (24h) | 1 Week (168h) | 1 Month (730h) | Purpose & Description |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 🌐 `aws_route53_record` | Route 53 | Anycast DNS | `$0.001` | `$0.02` | `$0.13` | `$0.60` | Latency-Based Routing & Global Health Probes |
-| ⚖️ `aws_lb` | Application Load Balancer | ALB Standard | `$0.025` | `$0.60` | `$4.20` | `$18.25` | External HTTPS Ingress & Listener Rules |
-| ⚡ `aws_ecs_cluster` / `service` | ECS Fargate | Serverless | `$0.051` | `$1.22` | `$8.57` | `$37.23` | 8 Microservices Containers (2 vCPU / 4GB RAM) |
-| 🗄️ `aws_db_instance` | RDS PostgreSQL Primary | `db.t4g.micro` | `$0.021` | `$0.50` | `$3.53` | `$15.33` | Primary PostgreSQL 15 Database (`us-east-1`) |
-| 🔄 `aws_db_instance` (Replica) | RDS Read Replica | `db.t4g.micro` | `$0.021` | `$0.50` | `$3.53` | `$15.33` | Async Cross-Region Read Replica (`us-west-2`) |
-| ⚡ `aws_elasticache_cluster` | ElastiCache Redis | `cache.t4g.micro` | `$0.017` | `$0.41` | `$2.86` | `$12.41` | Nutrition Facts & Recipe Video Cache Layer |
-| 📦 `aws_s3_bucket` | S3 Object Storage | Standard CRR | `$0.003` | `$0.07` | `$0.50` | `$2.20` | Food Image Uploads (50GB Cross-Region Rep) |
-| 🐳 `aws_ecr_repository` | ECR Repositories | Private ECR | `$0.001` | `$0.03` | `$0.23` | `$1.00` | Private Container Image Repositories (10GB) |
-| 🔐 `aws_secretsmanager_secret` | Secrets Manager | Standard | `$0.002` | `$0.05` | `$0.37` | `$1.60` | Key Vault Secrets (DB Passwords & JWT Tokens) |
-| 🚨 `aws_cloudwatch_metric_alarm` | CloudWatch Alarms | SRE Metric Rules | `$0.005` | `$0.12` | `$0.84` | `$3.65` | P1/P2 Golden Signals Metric Alarms & Logs |
-| 💵 **TOTAL ESTIMATED COST** | **AWS Environment** | **Multi-Region** | **`~$0.15`** | **`~$3.52`** | **`~$24.76`** | **`~$107.60`** | **Complete AWS Infrastructure Total** |
+| Resource & SKU | 1 Hr | 1 Day | 1 Wk | 1 Mo | Purpose & Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🌐 `aws_route53_record` (Anycast DNS) | `$0.00` | `$0.02` | `$0.13` | `$0.60` | Latency-Based Routing & Global Health Probes |
+| ⚖️ `aws_lb` (ALB Standard) | `$0.03` | `$0.60` | `$4.20` | `$18.25` | External HTTPS Ingress & Listener Rules |
+| ⚡ `aws_ecs_cluster` (8 Fargate Tasks) | `$0.05` | `$1.22` | `$8.57` | `$37.23` | 8 Microservices Containers (2 vCPU / 4GB) |
+| 🗄️ `aws_db_instance` (`db.t4g.micro`) | `$0.02` | `$0.50` | `$3.53` | `$15.33` | Primary PostgreSQL DB (`us-east-1`) |
+| 🔄 `aws_db_instance` (`db.t4g.micro` Replica)| `$0.02` | `$0.50` | `$3.53` | `$15.33` | Async Read Replica DB (`us-west-2`) |
+| ⚡ `aws_elasticache_cluster` (`cache.t4g.micro`)| `$0.02` | `$0.41` | `$2.86` | `$12.41` | Nutrition Facts & Video Cache Layer |
+| 📦 `aws_s3_bucket` (Standard CRR) | `$0.00` | `$0.07` | `$0.50` | `$2.20` | Food Image Uploads (50GB Cross-Region) |
+| 🐳 `aws_ecr_repository` (Private ECR) | `$0.00` | `$0.03` | `$0.23` | `$1.00` | Private Container Image Repositories (10GB) |
+| 🔐 `aws_secretsmanager_secret` (Standard) | `$0.00` | `$0.05` | `$0.37` | `$1.60` | Vault Secrets (DB Passwords & JWT Tokens) |
+| 🚨 `aws_cloudwatch_metric_alarm` (3 Rules) | `$0.01` | `$0.12` | `$0.84` | `$3.65` | SRE Metric Alarms & CloudWatch Logs |
+| 💵 **TOTAL AWS MULTI-REGION COST** | **`~$0.15`** | **`~$3.52`** | **`~$24.76`** | **`~$107.60`** | **Complete AWS Infrastructure Total** |
 
 ---
 

@@ -4,22 +4,22 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
-## 📋 GCP Resource Inventory & Cost / Pricing Reference
+## 📋 GCP Resource Inventory & Cost Reference
 
-Below is the complete resource inventory and estimated operational cost breakdown with service icons based on GCP Standard Pay-As-You-Go pricing (us-central1 & europe-west1 DR):
+Below is the compact, single-screen resource inventory and estimated operational cost breakdown (Pay-As-You-Go pricing for `us-central1` Primary & `europe-west1` DR):
 
-| Resource Name / Type | GCP Service | SKU / Tier | 1 Hr Usage | 1 Day (24h) | 1 Week (168h) | 1 Month (730h) | Purpose & Description |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 🌐 `google_compute_global_forwarding_rule` | Global Load Balancer | Global External | `$0.027` | `$0.65` | `$4.54` | `$19.71` | Anycast HTTP(S) Load Balancer & WAF Armor |
-| 🔗 `google_vpc_access_connector` | VPC Access Connector | e2-micro | `$0.008` | `$0.19` | `$1.34` | `$5.84` | Serverless VPC Access Connector for Cloud Run |
-| ⚡ `google_cloud_run_v2_service` (x8) | Cloud Run | Serverless | `$0.012` | `$0.29` | `$2.02` | `$8.76` | 8 Microservices Containers (2M free calls/mo) |
-| 🗄️ `google_sql_database_instance` | Cloud SQL Primary | `db-custom-2-7680` | `$0.098` | `$2.35` | `$16.46` | `$71.54` | Primary PostgreSQL 15 Database (`us-central1`) |
-| 🔄 `google_sql_database_instance` (Replica) | Cloud SQL Replica | `db-custom-2-7680` | `$0.098` | `$2.35` | `$16.46` | `$71.54` | Async Cross-Region Read Replica (`europe-west1`) |
-| ⚡ `google_redis_instance` | Memorystore Redis | `BASIC` Tier | `$0.049` | `$1.18` | `$8.23` | `$35.77` | Nutrition Facts & Video Caching Layer (1GB) |
-| 📦 `google_storage_bucket` | Cloud Storage (GCS) | Multi-Region | `$0.003` | `$0.07` | `$0.51` | `$2.20` | Food Image Storage Bucket (`NAM4` / `EU`) |
-| 🐳 `google_artifact_registry_repository` | Artifact Registry | Docker Repo | `$0.001` | `$0.03` | `$0.23` | `$1.00` | Central Container Image Repository (10GB) |
-| 🚨 `google_monitoring_alert_policy` | Cloud Operations | SRE Metric Rules | `$0.004` | `$0.10` | `$0.67` | `$2.90` | P1/P2 Golden Signals Alerts & Logging |
-| 💵 **TOTAL ESTIMATED COST** | **GCP Environment** | **Multi-Region** | **`~$0.30`** | **`~$7.21`** | **`~$50.46`** | **`~$219.26`** | **Complete GCP Infrastructure Total** |
+| Resource & SKU | 1 Hr | 1 Day | 1 Wk | 1 Mo | Purpose & Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🌐 `google_compute_global_forwarding_rule` | `$0.03` | `$0.65` | `$4.54` | `$19.71` | Global Anycast HTTP(S) Load Balancer & WAF |
+| 🔗 `google_vpc_access_connector` (`e2-micro`) | `$0.01` | `$0.19` | `$1.34` | `$5.84` | Serverless VPC Access Connector |
+| ⚡ `google_cloud_run_v2_service` (8 Services) | `$0.01` | `$0.29` | `$2.02` | `$8.76` | 8 Microservices Containers (2M free/mo) |
+| 🗄️ `google_sql_database_instance` (`db-custom-2`) | `$0.10` | `$2.35` | `$16.46` | `$71.54` | Primary PostgreSQL DB (`us-central1`) |
+| 🔄 `google_sql_database_instance` (Replica EU)| `$0.10` | `$2.35` | `$16.46` | `$71.54` | Async Read Replica DB (`europe-west1`) |
+| ⚡ `google_redis_instance` (`BASIC` 1GB) | `$0.05` | `$1.18` | `$8.23` | `$35.77` | Nutrition Facts & Video Cache Layer |
+| 📦 `google_storage_bucket` (Multi-Region GCS) | `$0.00` | `$0.07` | `$0.51` | `$2.20` | Food Image Storage Bucket (`NAM4` / `EU`) |
+| 🐳 `google_artifact_registry_repository` | `$0.00` | `$0.03` | `$0.23` | `$1.00` | Central Container Image Repository (10GB) |
+| 🚨 `google_monitoring_alert_policy` (SRE Alert)| `$0.00` | `$0.10` | `$0.67` | `$2.90` | P1/P2 Golden Signals Alerts & Logging |
+| 💵 **TOTAL GCP MULTI-REGION COST** | **`~$0.30`** | **`~$7.21`** | **`~$50.46`** | **`~$219.26`** | **Complete GCP Infrastructure Total** |
 
 ---
 

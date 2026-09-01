@@ -4,24 +4,24 @@ This document contains full multi-region architectural specifications, component
 
 ---
 
-## 📋 Azure Resource Inventory & Cost / Pricing Reference
+## 📋 Azure Resource Inventory & Cost Reference
 
-Below is the complete resource inventory and estimated operational cost breakdown with service icons based on Azure Standard Pay-As-You-Go pricing (East US & West Europe DR):
+Below is the compact, single-screen resource inventory and estimated operational cost breakdown (Pay-As-You-Go pricing for `eastus` Primary & `westeurope` DR):
 
-| Resource Name / Type | Azure Service | SKU / Tier | 1 Hr Usage | 1 Day (24h) | 1 Week (168h) | 1 Month (730h) | Purpose & Description |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 🌐 `azurerm_cdn_frontdoor_profile` | Azure Front Door | Standard | `$0.047` | `$1.13` | `$7.90` | `$34.30` | Global Anycast Router, Latency Failover & WAF |
-| 🛡️ `azurerm_api_management` | API Management (APIM) | `Consumption_0` | `$0.000` | `$0.00` | `$0.00` | `$0.00` | Serverless API Facade (1M free calls/mo) |
-| ⚡ `azurerm_container_app` (x8) | Container Apps (ACA) | Serverless | `$0.015` | `$0.36` | `$2.52` | `$10.95` | 8 Microservices Mesh (`api-gateway`, `auth`, etc.) |
-| 🗄️ `azurerm_postgresql_flexible_server` | PostgreSQL Primary | `Standard_B1ms` | `$0.047` | `$1.13` | `$7.89` | `$34.05` | Primary PostgreSQL 15 Database (`eastus`) |
-| 🔄 `azurerm_postgresql_flexible_server_replica` | PostgreSQL Replica | `Standard_B1ms` | `$0.047` | `$1.13` | `$7.89` | `$34.05` | Read Replica Database (`westeurope`) |
-| ⚡ `azurerm_redis_cache` | Azure Cache for Redis | `Basic C0` | `$0.022` | `$0.53` | `$3.70` | `$16.06` | Nutrition & Recipe Video Cache Layer |
-| 📦 `azurerm_storage_account` | Blob Storage | `Standard RA-GRS` | `$0.003` | `$0.08` | `$0.54` | `$2.30` | Food Image Storage (50GB Geo-Redundant) |
-| 🐳 `azurerm_container_registry` | ACR Registry | Premium Geo-Rep | `$0.068` | `$1.67` | `$11.69` | `$50.00` | Geo-Replicated Private Image Registry |
-| 🔐 `azurerm_key_vault` | Key Vault | Standard | `$0.0004` | `$0.01` | `$0.07` | `$0.30` | Secret Management (JWT & DB Passwords) |
-| 🚨 `azurerm_monitor_metric_alert` (x4) | Azure Monitor Alerts | SRE Metric Rules | `$0.0005` | `$0.01` | `$0.09` | `$0.40` | P1/P2 Golden Signals Metric Alerts |
-| 📊 `azurerm_log_analytics_workspace` | Log Analytics | PerGB2018 | `$0.005` | `$0.12` | `$0.84` | `$3.65` | Centralized Log Workspace (5GB/mo free) |
-| 💵 **TOTAL ESTIMATED COST** | **Azure Environment** | **Multi-Region** | **`~$0.25`** | **`~$6.17`** | **`~$43.13`** | **`~$186.06`** | **Complete Azure Infrastructure Total** |
+| Resource & SKU | 1 Hr | 1 Day | 1 Wk | 1 Mo | Purpose & Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🌐 `azurerm_cdn_frontdoor_profile` (Standard) | `$0.05` | `$1.13` | `$7.90` | `$34.30` | Global Anycast Router & WAF |
+| 🛡️ `azurerm_api_management` (`Consumption_0`) | `$0.00` | `$0.00` | `$0.00` | `$0.00` | Serverless API Facade (1M free/mo) |
+| ⚡ `azurerm_container_app` (8 Apps, Serverless) | `$0.01` | `$0.36` | `$2.52` | `$10.95` | 8 Microservices Mesh |
+| 🗄️ `azurerm_postgresql_flexible_server` (`B1ms`) | `$0.05` | `$1.13` | `$7.89` | `$34.05` | Primary PostgreSQL DB (`eastus`) |
+| 🔄 `azurerm_postgresql_flexible_server_replica` | `$0.05` | `$1.13` | `$7.89` | `$34.05` | Read Replica DB (`westeurope`) |
+| ⚡ `azurerm_redis_cache` (`Basic C0`) | `$0.02` | `$0.53` | `$3.70` | `$16.06` | Nutrition & Video Cache Layer |
+| 📦 `azurerm_storage_account` (`Standard RA-GRS`) | `$0.00` | `$0.08` | `$0.54` | `$2.30` | Food Image Blob Storage (50GB) |
+| 🐳 `azurerm_container_registry` (Premium Geo-Rep)| `$0.07` | `$1.67` | `$11.69` | `$50.00` | Geo-Replicated Image Registry |
+| 🔐 `azurerm_key_vault` (Standard) | `$0.00` | `$0.01` | `$0.07` | `$0.30` | Vault Secrets (JWT & Passwords) |
+| 🚨 `azurerm_monitor_metric_alert` (4 Alert Rules) | `$0.00` | `$0.01` | `$0.09` | `$0.40` | SRE Metric Alert Rules |
+| 📊 `azurerm_log_analytics_workspace` (PerGB2018) | `$0.00` | `$0.12` | `$0.84` | `$3.65` | Centralized Logs (5GB/mo free) |
+| 💵 **TOTAL AZURE MULTI-REGION COST** | **`~$0.25`** | **`~$6.17`** | **`~$43.13`** | **`~$186.06`** | **Complete Azure Infrastructure Total** |
 
 ---
 
