@@ -4,7 +4,7 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
-## 🗺️ Step-by-Step Documentation Index (0 - 12)
+## 🗺️ Step-by-Step Documentation Index (0 - 13)
 
 0. [00 - AWS Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install AWS CLI, Terraform, and configure ECR authentication.
@@ -19,3 +19,4 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 10. [10 - GitHub Actions CI/CD Pipeline](10-github-actions-ci-cd-aws.md): Configure automated ECR image building and ECS task deployment.
 11. [11 - One-Click AWS Deployment Script](11-one-click-aws-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - AWS Multi-Region Active-Active Architecture](12-multi-region-failover.md): Route 53 global failover routing and RDS Read Replicas.
+13. [13 - AWS Real-Time Disaster Recovery Failover & Failback Runbook](13-realtime-failover-runbook.md): Operational runbook for live AWS region failover and failback.

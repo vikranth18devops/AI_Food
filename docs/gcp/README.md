@@ -4,7 +4,7 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 
 ---
 
-## 🗺️ Step-by-Step Documentation Index (0 - 12)
+## 🗺️ Step-by-Step Documentation Index (0 - 13)
 
 0. [00 - GCP Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install `gcloud` CLI, Terraform, and configure Artifact Registry authentication.
@@ -19,3 +19,4 @@ This directory contains step-by-step guides for provisioning, deploying, and ope
 10. [10 - GitHub Actions CI/CD Pipeline](10-github-actions-ci-cd-gcp.md): Configure automated Artifact Registry image building and Cloud Run revisions deployment.
 11. [11 - One-Click GCP Deployment Script](11-one-click-gcp-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - GCP Multi-Region Active-Active Architecture](12-multi-region-failover.md): Global External Load Balancer routing and Cloud SQL Read Replicas.
+13. [13 - GCP Real-Time Disaster Recovery Failover & Failback Runbook](13-realtime-failover-runbook.md): Operational runbook for live GCP region failover and failback.
