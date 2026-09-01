@@ -116,3 +116,21 @@ module "apim" {
     module.container_apps
   ]
 }
+
+# SRE Monitoring & Alerts Module
+module "alerts" {
+  source              = "./modules/alerts"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  prefix              = var.prefix
+  postgres_id         = module.database.server_id
+  redis_id            = module.redis.id
+  apim_id             = module.apim.apim_id
+
+  depends_on = [
+    module.database,
+    module.redis,
+    module.apim
+  ]
+}
+

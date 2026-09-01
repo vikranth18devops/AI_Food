@@ -22,6 +22,7 @@ Before deploying, review all 25+ Azure resources provisioned via Terraform:
 | `azurerm_storage_account` | Blob Storage | `Standard RA-GRS` | Food Image Uploads (`uploads` container) | Geo-Redundant Storage (RA-GRS) |
 | `azurerm_container_registry` | ACR | Premium | Container Image Registry (`foodlensdevacr`) | Geo-Replicated Registry |
 | `azurerm_key_vault` | Key Vault | Standard | Secret Management (`foodlensdevkv` for JWT & Passwords) | Replicated Vault Secrets |
+| `azurerm_monitor_metric_alert` (x4) | Azure Monitor Alerts | SRE Metric Rules | P1/P2 Golden Signals Alerts (CPU, Memory, 5xx Errors) | Multi-Region Metric Alerts |
 | `azurerm_log_analytics_workspace` | Log Analytics | PerGB2018 | Centralized Container Logs & Insights (`foodlens-dev-law`) | Unified Analytics Log Sink |
 
 ---
@@ -184,7 +185,7 @@ flowchart TD
 
 ---
 
-## 🗺️ 3. Step-by-Step Documentation Index (0 - 14)
+## 🗺️ 3. Step-by-Step Documentation Index (0 - 15)
 
 0. [00 - Azure Architecture & Flow Diagram](00-architecture-flow-diagram.md): Dedicated visual Mermaid flowcharts and sequence diagrams.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install Azure CLI, Terraform, and configure ACR credentials.
@@ -200,4 +201,5 @@ flowchart TD
 11. [11 - One-Click ACA Deployment Script](11-one-click-aca-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - Azure Multi-Region Active-Active Architecture](12-multi-region-failover.md): Azure Front Door global routing and PostgreSQL Read Replicas.
 13. [13 - Azure API Management (APIM) Integration](13-api-management-apim.md): APIM gateway facade, rate limiting policies, and developer portal.
-14. [14 - Real-Time Disaster Recovery Failover & Failback Runbook](14-realtime-failover-runbook.md): Step-by-step operational runbook for live Azure region failover and failback.
+14. [14 - Real-Time Disaster Recovery Failover & Failback Runbook](14-realtime-failover-runbook.md): Operational runbook for live Azure region failover and failback.
+15. [15 - Azure SRE Alert Incident Response Runbook](15-sre-alert-incident-runbook.md): SRE operational triage, diagnostic CLI commands, and remediation steps for Azure Monitor metric alerts.
