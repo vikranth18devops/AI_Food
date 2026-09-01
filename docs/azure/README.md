@@ -109,51 +109,60 @@ flowchart TD
 ## ⚡ 2. Azure Multi-Region Execution Flow Chart
 
 ```
-[ Client / React SPA ]
-         │ (1. HTTPS Request)
-         ▼
-[ Azure Front Door ] ── (2. Anycast WAF Inspection & Global Failover)
-         │
-         ├─── (Active Primary Path) ────────────────────────────────────────────────────────┐
-         │                                                                                  │
-         ▼ (East US Primary)                                                                ▼ (West Europe Failover)
-[ Azure APIM Primary ]                                                             [ Azure APIM Secondary ]
-         │                                                                                  │
-         ▼                                                                                  ▼
-[ Traefik v3 Primary Proxy ]                                                       [ Traefik v3 Secondary Proxy ]
-         │                                                                                  │
-         ▼                                                                                  ▼
-[ API Gateway Primary (ACA) ]                                                      [ API Gateway Secondary (ACA) ]
-         │                                                                                  │
-         ├───► [ Auth Service (ACA) ] ──► [ Azure PostgreSQL Flex ]                        │
-         │                                           ▲                                      │
-         └───► [ Image Service (ACA) ] ─► [ Storage (GRS) ]                         (Read Replica DB & Storage Sync)
-                         │                           │                                      │
-                         ▼ (FOOD_ANALYSIS_REQUESTED) │                                      │
-           [ RabbitMQ Event Broker ]                 │                                      │
-                         │                           │                                      │
-   ┌─────────────────────┼─────────────────────┐     │                                      │
-   ▼                     ▼                     ▼     │                                      │
-[ Food Service ]  [ Nutrition Svc ]  [ Analysis Svc ]  │                                      │
-   │                     │                     │     │                                      │
-   ▼                     ▼                     ▼     │                                      │
-[ Azure Postgres ] [ Azure Redis ]   [ Azure Postgres] │                                    │
-   │                     │                     │     │                                      │
-   └─────────────────────┼─────────────────────┘     │                                      │
-                         │ (Event Chain)             │                                      │
-                         ▼                           │                                      │
-           [ Recommendation Service (ACA) ]          │                                      │
-                         │                           │                                      │
-                         ▼ (FOOD_ANALYSIS_COMPLETED) │                                      │
-           [ API Gateway Primary (ACA) ]             │                                      │
-                         │                           │                                      │
-                         ▼ (Real-Time SSE Stream)    │                                      │
-               [ Client / React SPA ] ───────────────┴──────────────────────────────────────┘
+[ Client / React SPA / Mobile App ]
+                │
+                │ (1. HTTPS Request Payload)
+                ▼
+  [ Azure Front Door Anycast Router ]
+  (Global Health Probes & WAF Shield)
+                │
+                ├─────────────────────────────────────────────────────────────────────────┐
+                │                                                                         │
+                ▼ (Primary Route: East US Healthy)                                        ▼ (Disaster Recovery Route: Failover)
+  [ Azure APIM Primary (East US) ]                                          [ Azure APIM Secondary (West Europe) ]
+                │                                                                         │
+                ▼                                                                         ▼
+  [ Traefik v3 Primary Proxy ]                                              [ Traefik v3 Secondary Proxy ]
+                │                                                                         │
+                ▼                                                                         ▼
+  [ API Gateway Container App (East US) ]                                   [ API Gateway Container App (West Europe) ]
+                │                                                                         │
+      ┌─────────┴─────────┐                                                     ┌─────────┴─────────┐
+      │                   │                                                     │                   │
+      ▼ (Sync Auth)       ▼ (Upload Stream)                                     ▼ (Failover Auth)   ▼ (Failover Upload)
+ [ Auth Service ]   [ Image Service ]                                      [ Auth Service ]    [ Image Service ]
+      │                   │                                                     │                   │
+      ▼                   ▼                                                     ▼                   ▼
+ [ Azure Postgres ] [ Azure Storage (Blob) ]                               [ PostgreSQL Replica ] [ Storage Replica (GRS) ]
+      (Primary)      (Primary uploads)                                      (Promoted Primary)  (Read-Access Secondary)
+                          │                                                                         │
+                          ▼ (Publish: FOOD_ANALYSIS_REQUESTED)                                       ▼
+             [ RabbitMQ Primary Broker ]                                               [ RabbitMQ Secondary Broker ]
+                          │                                                                         │
+    ┌─────────────────────┼─────────────────────┐                                   ┌───────────────┼───────────────┐
+    ▼                     ▼                     ▼                                   ▼               ▼               ▼
+[ Food Service ]   [ Nutrition Service ] [ Analysis Service ]                   [ Food Service ] [ Nutrition Svc ] [ Analysis Svc ]
+(Vision AI Engine) (USDA 100g Lookup)  (AI Health Insights)                     (Failover Mesh)  (Failover Mesh)  (Failover Mesh)
+    │                     │                     │                                   │               │               │
+    ▼                     ▼                     ▼                                   ▼               ▼               ▼
+[ Azure Postgres ] [ Azure Redis ]     [ Azure Postgres ]                       [ Postgres Rep ] [ Secondary Redis ] [ Postgres Rep ]
+    │                     │                     │                                   │               │               │
+    └─────────────────────┼─────────────────────┘                                   └───────────────┼───────────────┘
+                          │ (Async Event Chain)                                                     │
+                          ▼                                                                         ▼
+          [ Recommendation Service (East US) ]                                    [ Recommendation Service (West Europe) ]
+          (YouTube Recipe Video Search)                                           (Failover Video Search)
+                          │                                                                         │
+                          ▼ (Publish: FOOD_ANALYSIS_COMPLETED)                                      ▼
+          [ API Gateway Primary Container App ]                                    [ API Gateway Secondary Container App ]
+                          │                                                                         │
+                          ▼ (Real-Time SSE Event Stream)                                            ▼
+            [ Client / React SPA UI ] ──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🗺️ 3. Step-by-Step Documentation Index (0 - 13)
+## 🗺️ 3. Step-by-Step Documentation Index (0 - 14)
 
 0. [00 - Azure Architecture & Flow Diagram](00-architecture-flow-diagram.md): Dedicated visual Mermaid flowcharts and sequence diagrams.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install Azure CLI, Terraform, and configure ACR credentials.
@@ -169,3 +178,4 @@ flowchart TD
 11. [11 - One-Click ACA Deployment Script](11-one-click-aca-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - Azure Multi-Region Active-Active Architecture](12-multi-region-failover.md): Azure Front Door global routing and PostgreSQL Read Replicas.
 13. [13 - Azure API Management (APIM) Integration](13-api-management-apim.md): APIM gateway facade, rate limiting policies, and developer portal.
+14. [14 - Real-Time Disaster Recovery Failover & Failback Runbook](14-realtime-failover-runbook.md): Step-by-step operational runbook for live Azure region failover and failback.
