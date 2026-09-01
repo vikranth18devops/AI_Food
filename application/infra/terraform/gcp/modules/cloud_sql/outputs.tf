@@ -2,6 +2,11 @@ output "instance_connection_name" {
   value = google_sql_database_instance.postgres.connection_name
 }
 
+output "instance_name" {
+  value       = google_sql_database_instance.postgres.name
+  description = "Cloud SQL Instance Name"
+}
+
 output "public_ip" {
   value = google_sql_database_instance.postgres.public_ip_address
 }

@@ -21,12 +21,13 @@ Before deploying, review all 20+ AWS resources provisioned via Terraform:
 | `aws_elasticache_cluster` | ElastiCache Redis | `cache.t4g.micro` | Nutrition Facts & Recipe Video Cache Layer | Active Instances per Region |
 | `aws_s3_bucket` | S3 Object Storage | Standard CRR | Food Image Uploads (`foodlens-dev-uploads`) | Cross-Region Replication (CRR) |
 | `aws_ecr_repository` (x8) | ECR Repositories | Private ECR | Image Repositories for 8 microservices | Cross-Region Replication Enabled |
+| `aws_cloudwatch_metric_alarm` (x3) | CloudWatch Alarms | SRE Metric Rules | P1/P2 Golden Signals Alarms (CPU, Free Storage, 5xx Errors) | Multi-Region Metric Alarms |
 | `aws_secretsmanager_secret` | Secrets Manager | Standard | Key Vault Secrets for DB passwords & JWT secrets | Replicated Secrets |
 | `aws_cloudwatch_log_group` | CloudWatch Logs | Standard | Centralized Container Logs & Metric Alarms | Regional Log Streams |
 
 ---
 
-## 🗺️ Step-by-Step Documentation Index (0 - 13)
+## 🗺️ Step-by-Step Documentation Index (0 - 14)
 
 0. [00 - AWS Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install AWS CLI, Terraform, and configure ECR authentication.
@@ -42,3 +43,4 @@ Before deploying, review all 20+ AWS resources provisioned via Terraform:
 11. [11 - One-Click AWS Deployment Script](11-one-click-aws-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - AWS Multi-Region Active-Active Architecture](12-multi-region-failover.md): Route 53 global failover routing and RDS Read Replicas.
 13. [13 - AWS Real-Time Disaster Recovery Failover & Failback Runbook](13-realtime-failover-runbook.md): Operational runbook for live AWS region failover and failback.
+14. [14 - AWS SRE Alert Incident Response Runbook](14-sre-alert-incident-runbook.md): SRE operational triage, diagnostic CLI commands, and remediation steps for CloudWatch alarms.

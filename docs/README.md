@@ -1,6 +1,6 @@
 # FoodLens AI Documentation Portal
 
-Welcome to the central documentation portal for **FoodLens AI**. This directory contains all architecture specs, database schemas, API specs, security policies, and multi-region cloud production deployment guides ordered alphabetically.
+Welcome to the central documentation portal for **FoodLens AI**. This directory contains all architecture specs, database schemas, API specs, security policies, multi-region cloud production guides, and SRE incident runbooks ordered alphabetically.
 
 ---
 
@@ -16,19 +16,25 @@ Welcome to the central documentation portal for **FoodLens AI**. This directory 
 
 ---
 
-## ☁️ Multi-Region Multi-Cloud Production Guides (Alphabetical Order)
+## ☁️ Multi-Region Multi-Cloud Production Guides & SRE Runbooks (Alphabetical Order)
 
 ### 1. Amazon Web Services ([`aws/`](aws/))
-- **12-Step Multi-Region Production Guide**: AWS ECS Fargate, RDS PostgreSQL Cross-Region Replicas, ElastiCache Redis, S3 CRR, Secrets Manager, ALB, Route 53 Failover, and CloudWatch.
-- **Master Guide**: [`aws/README.md`](aws/README.md)
-- **Multi-Region Failover Guide**: [`aws/12-multi-region-failover.md`](aws/12-multi-region-failover.md)
+- **15-Step Multi-Region Production Suite**: AWS ECS Fargate, RDS PostgreSQL Cross-Region Replicas, ElastiCache Redis, S3 CRR, Secrets Manager, ALB, Route 53 Failover, CloudWatch Alarms, and SRE Incident Response Runbook.
+- **Master Guide & Resource Inventory**: [`aws/README.md`](aws/README.md)
+- **Multi-Region Architecture & Flow Diagrams**: [`aws/00-architecture-flow-diagram.md`](aws/00-architecture-flow-diagram.md)
+- **Real-Time DR Failover Runbook**: [`aws/13-realtime-failover-runbook.md`](aws/13-realtime-failover-runbook.md)
+- **SRE Alert Incident Response Runbook**: [`aws/14-sre-alert-incident-runbook.md`](aws/14-sre-alert-incident-runbook.md)
 
 ### 2. Microsoft Azure ([`azure/`](azure/))
-- **12-Step Multi-Region Production Guide**: Azure Container Apps (ACA), PostgreSQL Flexible Server Read Replicas, Azure Redis, Blob Storage GRS, Key Vault, Azure Front Door, and Log Analytics.
-- **Master Guide**: [`azure/README.md`](azure/README.md)
-- **Multi-Region Failover Guide**: [`azure/12-multi-region-failover.md`](azure/12-multi-region-failover.md)
+- **16-Step Multi-Region Production Suite**: Azure Container Apps (ACA), Azure APIM Gateway (`Consumption_0`), PostgreSQL Flexible Server Read Replicas, Azure Redis, Blob Storage GRS, Key Vault, Azure Front Door, Azure Monitor Metric Alerts, and SRE Incident Response Runbook.
+- **Master Guide & Resource Inventory**: [`azure/README.md`](azure/README.md)
+- **Multi-Region Architecture & Flow Diagrams**: [`azure/00-architecture-flow-diagram.md`](azure/00-architecture-flow-diagram.md)
+- **Real-Time DR Failover Runbook**: [`azure/14-realtime-failover-runbook.md`](azure/14-realtime-failover-runbook.md)
+- **SRE Alert Incident Response Runbook**: [`azure/15-sre-alert-incident-runbook.md`](azure/15-sre-alert-incident-runbook.md)
 
 ### 3. Google Cloud Platform ([`gcp/`](gcp/))
-- **12-Step Multi-Region Production Guide**: GCP Cloud Run, Cloud SQL PostgreSQL Read Replicas, Memorystore Redis, Dual-Region GCS, Secret Manager, Global External Load Balancer, and Cloud Logging.
-- **Master Guide**: [`gcp/README.md`](gcp/README.md)
-- **Multi-Region Failover Guide**: [`gcp/12-multi-region-failover.md`](gcp/12-multi-region-failover.md)
+- **15-Step Multi-Region Production Suite**: GCP Cloud Run, Cloud SQL PostgreSQL Read Replicas, Memorystore Redis, Dual-Region GCS, Secret Manager, Global External Load Balancer, Cloud Monitoring Alert Policies, and SRE Incident Response Runbook.
+- **Master Guide & Resource Inventory**: [`gcp/README.md`](gcp/README.md)
+- **Multi-Region Architecture & Flow Diagrams**: [`gcp/00-architecture-flow-diagram.md`](gcp/00-architecture-flow-diagram.md)
+- **Real-Time DR Failover Runbook**: [`gcp/13-realtime-failover-runbook.md`](gcp/13-realtime-failover-runbook.md)
+- **SRE Alert Incident Response Runbook**: [`gcp/14-sre-alert-incident-runbook.md`](gcp/14-sre-alert-incident-runbook.md)

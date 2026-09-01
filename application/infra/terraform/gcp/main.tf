@@ -70,3 +70,16 @@ module "cloud_run" {
   jwt_access_secret  = var.jwt_access_secret
   jwt_refresh_secret = var.jwt_refresh_secret
 }
+
+# SRE Monitoring & Alerts Module
+module "alerts" {
+  source                 = "./modules/alerts"
+  project_id             = var.project_id
+  prefix                 = var.prefix
+  cloudsql_instance_name = module.cloud_sql.instance_name
+
+  depends_on = [
+    module.cloud_sql,
+    module.cloud_run
+  ]
+}

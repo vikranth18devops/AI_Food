@@ -71,3 +71,18 @@ module "ecs" {
   jwt_access_secret   = var.jwt_access_secret
   jwt_refresh_secret  = var.jwt_refresh_secret
 }
+
+# SRE Monitoring & Alerts Module
+module "alerts" {
+  source           = "./modules/alerts"
+  prefix           = var.prefix
+  environment      = var.environment
+  db_instance_id   = module.rds.db_instance_id
+  ecs_cluster_name = module.ecs.cluster_name
+  alb_arn_suffix   = module.ecs.alb_arn_suffix
+
+  depends_on = [
+    module.rds,
+    module.ecs
+  ]
+}

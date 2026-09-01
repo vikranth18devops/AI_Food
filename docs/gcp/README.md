@@ -19,12 +19,13 @@ Before deploying, review all 15+ GCP resources provisioned via Terraform:
 | `google_redis_instance` | Memorystore Redis | `BASIC` Tier | Fast Nutrition Facts & Video Caching Layer | Active Instances per Region |
 | `google_storage_bucket` | Cloud Storage (GCS) | Multi-Region | Food Image Storage Bucket (`NAM4` / `EU`) | Dual-Region / Multi-Region Sync |
 | `google_artifact_registry_repository` | Artifact Registry | Docker Repo | Central Container Image Repository | Multi-Region Image Replication |
+| `google_monitoring_alert_policy` (x2) | Cloud Operations | SRE Metric Rules | P1/P2 Golden Signals Alerts (CPU, 5xx Errors) | Multi-Region Metric Alerts |
 | `google_secret_manager_secret` | Secret Manager | Standard | Key Vault Secrets for DB passwords & JWT secrets | Global Secret Access |
 | `google_logging_project_sink` | Cloud Operations | Standard | Centralized Container Logs & Metrics Sinks | Global Operations Sink |
 
 ---
 
-## 🗺️ Step-by-Step Documentation Index (0 - 13)
+## 🗺️ Step-by-Step Documentation Index (0 - 14)
 
 0. [00 - GCP Architecture & Flow Diagram](00-architecture-flow-diagram.md): Visual Mermaid flowcharts, execution sequence diagrams, and failover flows.
 1. [01 - Prerequisites & Tooling Setup](01-prerequisites.md): Install `gcloud` CLI, Terraform, and configure Artifact Registry authentication.
@@ -40,3 +41,4 @@ Before deploying, review all 15+ GCP resources provisioned via Terraform:
 11. [11 - One-Click GCP Deployment Script](11-one-click-gcp-deploy.md): Automated one-command deployment and teardown guide.
 12. [12 - GCP Multi-Region Active-Active Architecture](12-multi-region-failover.md): Global External Load Balancer routing and Cloud SQL Read Replicas.
 13. [13 - GCP Real-Time Disaster Recovery Failover & Failback Runbook](13-realtime-failover-runbook.md): Operational runbook for live GCP region failover and failback.
+14. [14 - GCP SRE Alert Incident Response Runbook](14-sre-alert-incident-runbook.md): SRE operational triage, diagnostic CLI commands, and remediation steps for Google Monitoring alert policies.
