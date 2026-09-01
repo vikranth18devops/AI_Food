@@ -4,7 +4,7 @@ This document contains visual Mermaid flowchart and sequence diagrams detailing 
 
 ---
 
-## 📐 1. Azure Multi-Region Architecture & Flowchart Diagram
+## 📐 1. Azure Multi-Region Architecture Diagram
 
 ```mermaid
 flowchart TD
@@ -106,7 +106,63 @@ flowchart TD
 
 ---
 
-## 🔄 2. Azure Multi-Region Failover Sequence Diagram
+## ⚡ 2. Azure Multi-Region Execution Flow Chart
+
+```
+[ Client / React SPA / Mobile App ]
+                │
+                │ (1. HTTPS Request Payload)
+                ▼
+  [ Azure Front Door Anycast Router ]
+  (Global Health Probes & WAF Shield)
+                │
+                ├─────────────────────────────────────────────────────────────────────────┐
+                │                                                                         │
+                ▼ (Primary Route: East US Healthy)                                        ▼ (Disaster Recovery Route: Failover)
+  [ Azure APIM Primary (East US) ]                                          [ Azure APIM Secondary (West Europe) ]
+                │                                                                         │
+                ▼                                                                         ▼
+  [ Traefik v3 Primary Proxy ]                                              [ Traefik v3 Secondary Proxy ]
+                │                                                                         │
+                ▼                                                                         ▼
+  [ API Gateway Container App (East US) ]                                   [ API Gateway Container App (West Europe) ]
+                │                                                                         │
+      ┌─────────┴─────────┐                                                     ┌─────────┴─────────┐
+      │                   │                                                     │                   │
+      ▼ (Sync Auth)       ▼ (Upload Stream)                                     ▼ (Failover Auth)   ▼ (Failover Upload)
+ [ Auth Service ]   [ Image Service ]                                      [ Auth Service ]    [ Image Service ]
+      │                   │                                                     │                   │
+      ▼                   ▼                                                     ▼                   ▼
+ [ Azure Postgres ] [ Azure Storage (Blob) ]                               [ PostgreSQL Replica ] [ Storage Replica (GRS) ]
+      (Primary)      (Primary uploads)                                      (Promoted Primary)  (Read-Access Secondary)
+                          │                                                                         │
+                          ▼ (Publish: FOOD_ANALYSIS_REQUESTED)                                       ▼
+             [ RabbitMQ Primary Broker ]                                               [ RabbitMQ Secondary Broker ]
+                          │                                                                         │
+    ┌─────────────────────┼─────────────────────┐                                   ┌───────────────┼───────────────┐
+    ▼                     ▼                     ▼                                   ▼               ▼               ▼
+[ Food Service ]   [ Nutrition Service ] [ Analysis Service ]                   [ Food Service ] [ Nutrition Svc ] [ Analysis Svc ]
+(Vision AI Engine) (USDA 100g Lookup)  (AI Health Insights)                     (Failover Mesh)  (Failover Mesh)  (Failover Mesh)
+    │                     │                     │                                   │               │               │
+    ▼                     ▼                     ▼                                   ▼               ▼               ▼
+[ Azure Postgres ] [ Azure Redis ]     [ Azure Postgres ]                       [ Postgres Rep ] [ Secondary Redis ] [ Postgres Rep ]
+    │                     │                     │                                   │               │               │
+    └─────────────────────┼─────────────────────┘                                   └───────────────┼───────────────┘
+                          │ (Async Event Chain)                                                     │
+                          ▼                                                                         ▼
+          [ Recommendation Service (East US) ]                                    [ Recommendation Service (West Europe) ]
+          (YouTube Recipe Video Search)                                           (Failover Video Search)
+                          │                                                                         │
+                          ▼ (Publish: FOOD_ANALYSIS_COMPLETED)                                      ▼
+          [ API Gateway Primary Container App ]                                    [ API Gateway Secondary Container App ]
+                          │                                                                         │
+                          ▼ (Real-Time SSE Event Stream)                                            ▼
+            [ Client / React SPA UI ] ──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔄 3. Azure Multi-Region Failover Sequence Diagram
 
 ```mermaid
 sequenceDiagram
