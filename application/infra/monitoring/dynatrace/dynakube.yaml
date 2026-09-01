@@ -1,0 +1,15 @@
+apiVersion: dynatrace.com/v1beta1
+kind: DynaKube
+metadata:
+  name: foodlens-dynakube
+  namespace: dynatrace
+spec:
+  apiUrl: "https://xyz12345.live.dynatrace.com/api"
+  tokens: "dynatrace-secret"
+  oneAgent:
+    cloudNativeFullStack:
+      autoUpdate: true
+  activeGate:
+    capabilities:
+      - routing
+      - kubernetes-monitoring

@@ -1,0 +1,225 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AnalysisStatus {
+  PENDING
+  PROCESSING
+  FOOD_RECOGNITION
+  NUTRITION
+  HEALTH_ANALYSIS
+  RECOMMENDATIONS
+  COMPLETED
+  FAILED
+}
+
+enum SourceType {
+  NUTRITION
+  HEALTH
+  RECIPE
+  OTHER
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  profile       UserProfile?
+  refreshTokens RefreshToken[]
+  foodImages    FoodImage[]
+  foodAnalyses  FoodAnalysis[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dietaryPreferences  String[] @default([])
+  allergies           String[] @default([])
+  defaultServingGrams Int      @default(100)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  isRevoked Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model FoodImage {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename     String
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  storagePath  String
+  url          String
+  createdAt    DateTime      @default(now())
+  foodAnalysis FoodAnalysis?
+
+  @@index([userId])
+  @@map("food_images")
+}
+
+model FoodAnalysis {
+  id              String          @id @default(uuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageId         String          @unique
+  image           FoodImage       @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  status          AnalysisStatus  @default(PENDING)
+  errorMessage    String?
+  servingGrams    Int             @default(100)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  identifiedFood  IdentifiedFood?
+  healthAnalysis  HealthAnalysis?
+  youtubeVideos   YouTubeVideo[]
+  analysisEvents  AnalysisEvent[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("food_analyses")
+}
+
+model IdentifiedFood {
+  id             String           @id @default(uuid())
+  analysisId     String           @unique
+  analysis       FoodAnalysis     @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  foodName       String
+  confidence     Float
+  possibleFoods  Json // Array of { name: string, confidence: number }
+  createdAt      DateTime         @default(now())
+  ingredients    Ingredient[]
+  nutritionFacts NutritionFacts?
+
+  @@index([foodName])
+  @@map("identified_foods")
+}
+
+model Ingredient {
+  id               String         @id @default(uuid())
+  identifiedFoodId String
+  identifiedFood   IdentifiedFood @relation(fields: [identifiedFoodId], references: [id], onDelete: Cascade)
+  name             String
+
+  @@map("ingredients")
+}
+
+model NutritionFacts {
+  id                  String         @id @default(uuid())
+  identifiedFoodId    String         @unique
+  identifiedFood      IdentifiedFood @relation(fields: [identifiedFoodId], references: [id], onDelete: Cascade)
+  baseServingSize     String         @default("100g")
+  calories            Float?
+  protein             Float?
+  carbohydrates       Float?
+  fat                 Float?
+  saturatedFat        Float?
+  fiber               Float?
+  sugar               Float?
+  sodium              Float?
+  additionalNutrients Json?
+  source              String
+  sourceUrl           String?
+  createdAt           DateTime       @default(now())
+
+  @@map("nutrition_facts")
+}
+
+model HealthAnalysis {
+  id                   String        @id @default(uuid())
+  analysisId           String        @unique
+  analysis             FoodAnalysis  @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  benefits             String[]
+  concerns             String[]
+  pros                 String[]
+  cons                 String[]
+  allergens            String[]
+  dietaryCompatibility Json // Array of { diet: string, isCompatible: boolean, reason?: string }
+  recommendations      String[]
+  disclaimer           String
+  createdAt            DateTime      @default(now())
+  claims               HealthClaim[]
+
+  @@map("health_analysis")
+}
+
+model HealthClaim {
+  id               String         @id @default(uuid())
+  healthAnalysisId String
+  healthAnalysis   HealthAnalysis @relation(fields: [healthAnalysisId], references: [id], onDelete: Cascade)
+  claim            String
+  category         String         @default("GENERAL")
+  sources          Source[]
+
+  @@map("health_claims")
+}
+
+model Source {
+  id            String       @id @default(uuid())
+  healthClaimId String
+  healthClaim   HealthClaim  @relation(fields: [healthClaimId], references: [id], onDelete: Cascade)
+  name          String
+  url           String
+  sourceType    SourceType   @default(HEALTH)
+  title         String
+  retrievedAt   DateTime     @default(now())
+
+  @@map("sources")
+}
+
+model YouTubeVideo {
+  id           String       @id @default(uuid())
+  analysisId   String
+  analysis     FoodAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  videoId      String
+  title        String
+  channelTitle String
+  description  String
+  thumbnailUrl String
+  publishedAt  String
+  url          String
+  createdAt    DateTime     @default(now())
+
+  @@index([analysisId])
+  @@map("youtube_videos")
+}
+
+model AnalysisEvent {
+  id            String         @id @default(uuid())
+  analysisId    String
+  analysis      FoodAnalysis   @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  eventType     String
+  stage         AnalysisStatus
+  payload       Json
+  correlationId String
+  createdAt     DateTime       @default(now())
+
+  @@index([analysisId])
+  @@index([correlationId])
+  @@map("analysis_events")
+}

@@ -1,0 +1,41 @@
+# kube-prometheus-stack Helm values override for FoodLens AI
+
+grafana:
+  enabled: true
+  adminPassword: "admin-foodlens-pass"
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.foodlens.example.com
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'foodlens-dashboards'
+          orgId: 1
+          folder: 'FoodLens AI'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/foodlens-dashboards
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    retention: 120h

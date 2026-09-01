@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: foodlens-ai-servicemonitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: foodlens-ai
+  namespaceSelector:
+    matchNames:
+      - foodlens-ai
+      - foodlens-dev
+      - foodlens-prod
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

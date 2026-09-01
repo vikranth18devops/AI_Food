@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-nutrition-service
+  labels:
+    app: nutrition-service
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.services.nutritionService.replicaCount }}
+  selector:
+    matchLabels:
+      app: nutrition-service
+  template:
+    metadata:
+      labels:
+        app: nutrition-service
+    spec:
+      containers:
+        - name: nutrition-service
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repositoryPrefix }}/nutrition-service:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.nutritionService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "foodlens-ai.fullname" . }}-config
+            - secretRef:
+                name: {{ include "foodlens-ai.fullname" . }}-secrets
+          resources:
+            {{- toYaml .Values.services.nutritionService.resources | nindent 12 }}

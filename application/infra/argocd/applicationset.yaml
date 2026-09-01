@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: foodlens-ai-multicloud
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: azure-aks
+            url: https://aks-cluster.hcp.eastus.azmk8s.io
+            valuesFile: values-azure.yaml
+            targetNamespace: foodlens-azure
+          - cluster: aws-eks
+            url: https://eks-cluster.us-east-1.eks.amazonaws.com
+            valuesFile: values-aws.yaml
+            targetNamespace: foodlens-aws
+          - cluster: gcp-gke
+            url: https://gke-cluster.us-central1.gke.goog
+            valuesFile: values-gcp.yaml
+            targetNamespace: foodlens-gcp
+  template:
+    metadata:
+      name: 'foodlens-ai-{{cluster}}'
+    spec:
+      project: foodlens-ai
+      source:
+        repoURL: 'https://github.com/your-org/AI_Food.git'
+        targetRevision: HEAD
+        path: infra/helm/foodlens-ai
+        helm:
+          valueFiles:
+            - '{{valuesFile}}'
+      destination:
+        server: '{{url}}'
+        namespace: '{{targetNamespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

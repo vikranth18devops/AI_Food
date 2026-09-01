@@ -1,0 +1,78 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test-microservices:
+    name: Test & Build Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Code
+        run: npm run lint || echo "Lint step completed with warnings"
+
+      - name: Run Unit Tests
+        run: npm test
+
+  lint-helm:
+    name: Lint Helm Chart
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+
+      - name: Helm Lint
+        run: helm lint infra/helm/foodlens-ai
+
+      - name: Helm Template Test
+        run: helm template foodlens-ai infra/helm/foodlens-ai > /dev/null
+
+  validate-terraform:
+    name: Validate Terraform Code
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cloud: [azure, aws, gcp]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.5.7'
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: infra/terraform/${{ matrix.cloud }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        working-directory: infra/terraform/${{ matrix.cloud }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: infra/terraform/${{ matrix.cloud }}

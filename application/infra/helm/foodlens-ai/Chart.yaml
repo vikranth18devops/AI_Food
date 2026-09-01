@@ -1,0 +1,8 @@
+apiVersion: v2
+name: foodlens-ai
+description: Helm chart for FoodLens AI Microservices Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: FoodLens AI Team

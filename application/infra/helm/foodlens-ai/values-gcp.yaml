@@ -1,0 +1,9 @@
+# GCP Traefik Ingress & Artifact Registry Overrides
+ingress:
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+image:
+  registry: "us-central1-docker.pkg.dev/foodlens-ai-project/foodlens-dev-repo"

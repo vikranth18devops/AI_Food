@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-frontend
+  labels:
+    app: frontend
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.frontend.port }}
+      targetPort: {{ .Values.services.frontend.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: frontend

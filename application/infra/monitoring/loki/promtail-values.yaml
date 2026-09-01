@@ -1,0 +1,14 @@
+# Promtail Log Collector Helm Values Override
+
+config:
+  clients:
+    - url: http://loki:3100/loki/api/v1/push
+  snippets:
+    pipelineStages:
+      - docker: {}
+      - json:
+          expressions:
+            level: level
+            msg: message
+            timestamp: timestamp
+            service: service

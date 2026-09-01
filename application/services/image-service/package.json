@@ -1,0 +1,32 @@
+{
+  "name": "@foodlens/image-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main"
+  },
+  "dependencies": {
+    "@foodlens/shared-config": "1.0.0",
+    "@foodlens/shared-types": "1.0.0",
+    "@foodlens/shared-utils": "1.0.0",
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "@nestjs/platform-express": "^10.3.3",
+    "@prisma/client": "^5.10.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "multer": "1.4.5-lts.1",
+    "reflect-metadata": "^0.2.1",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.3.2",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}

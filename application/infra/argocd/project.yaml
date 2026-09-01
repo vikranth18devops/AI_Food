@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: foodlens-ai
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: FoodLens AI Microservices Platform Project
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: foodlens-ai
+      server: '*'
+    - namespace: foodlens-dev
+      server: '*'
+    - namespace: foodlens-staging
+      server: '*'
+    - namespace: foodlens-prod
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

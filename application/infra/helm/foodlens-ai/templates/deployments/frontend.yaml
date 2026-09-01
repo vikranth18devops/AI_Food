@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-frontend
+  labels:
+    app: frontend
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.services.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repositoryPrefix }}/frontend:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.frontend.port }}
+          resources:
+            {{- toYaml .Values.services.frontend.resources | nindent 12 }}

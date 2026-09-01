@@ -1,0 +1,17 @@
+# Kibana Helm Values Override
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: kibana.foodlens.example.com
+      paths:
+        - path: /

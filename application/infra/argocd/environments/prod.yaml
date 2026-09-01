@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: foodlens-ai-prod
+  namespace: argocd
+spec:
+  project: foodlens-ai
+  source:
+    repoURL: 'https://github.com/your-org/AI_Food.git'
+    targetRevision: main
+    path: infra/helm/foodlens-ai
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: foodlens-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

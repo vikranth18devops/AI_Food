@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-auth-service
+  labels:
+    app: auth-service
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.services.authService.replicaCount }}
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repositoryPrefix }}/auth-service:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.authService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "foodlens-ai.fullname" . }}-config
+            - secretRef:
+                name: {{ include "foodlens-ai.fullname" . }}-secrets
+          resources:
+            {{- toYaml .Values.services.authService.resources | nindent 12 }}

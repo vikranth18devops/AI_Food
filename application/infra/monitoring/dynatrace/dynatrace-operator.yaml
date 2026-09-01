@@ -1,0 +1,6 @@
+# Dynatrace Operator Deployment Guide & Placeholder
+# To install Dynatrace Operator CRDs and controller:
+#
+# kubectl create namespace dynatrace
+# kubectl apply -f https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/kubernetes.yaml
+# kubectl apply -f infra/monitoring/dynatrace/dynakube.yaml

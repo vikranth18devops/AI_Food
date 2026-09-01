@@ -1,0 +1,229 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: foodlens-traefik
+    restart: always
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: foodlens-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: foodlens_user
+      POSTGRES_PASSWORD: foodlens_password
+      POSTGRES_DB: foodlens_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodlens_user -d foodlens_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: foodlens-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: foodlens-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: foodlens-api-gateway
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      JWT_ACCESS_SECRET: super-secret-access-key-foodlens-2026
+      JWT_REFRESH_SECRET: super-secret-refresh-key-foodlens-2026
+      MOCK_EXTERNAL_SERVICES: "true"
+      AUTH_SERVICE_URL: http://auth-service:3001
+      IMAGE_SERVICE_URL: http://image-service:3002
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: foodlens-auth-service
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      JWT_ACCESS_SECRET: super-secret-access-key-foodlens-2026
+      JWT_REFRESH_SECRET: super-secret-refresh-key-foodlens-2026
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  image-service:
+    build:
+      context: .
+      dockerfile: services/image-service/Dockerfile
+    container_name: foodlens-image-service
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      STORAGE_PATH: ./uploads
+    volumes:
+      - image_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  food-service:
+    build:
+      context: .
+      dockerfile: services/food-service/Dockerfile
+    container_name: foodlens-food-service
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_EXTERNAL_SERVICES: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  nutrition-service:
+    build:
+      context: .
+      dockerfile: services/nutrition-service/Dockerfile
+    container_name: foodlens-nutrition-service
+    restart: always
+    ports:
+      - "3004:3004"
+    environment:
+      NODE_ENV: development
+      PORT: 3004
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_EXTERNAL_SERVICES: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  analysis-service:
+    build:
+      context: .
+      dockerfile: services/analysis-service/Dockerfile
+    container_name: foodlens-analysis-service
+    restart: always
+    ports:
+      - "3005:3005"
+    environment:
+      NODE_ENV: development
+      PORT: 3005
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_EXTERNAL_SERVICES: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: services/recommendation-service/Dockerfile
+    container_name: foodlens-recommendation-service
+    restart: always
+    ports:
+      - "3006:3006"
+    environment:
+      NODE_ENV: development
+      PORT: 3006
+      DATABASE_URL: postgresql://foodlens_user:foodlens_password@postgres:5432/foodlens_db?schema=public
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_EXTERNAL_SERVICES: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: foodlens-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+
+volumes:
+  postgres_data:
+  image_uploads:

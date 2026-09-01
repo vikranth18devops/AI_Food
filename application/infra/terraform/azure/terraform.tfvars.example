@@ -1,0 +1,7 @@
+location           = "eastus"
+environment        = "dev"
+prefix             = "foodlens-dev"
+db_admin_user      = "foodlens_admin"
+db_admin_password  = "ChangeMeP@ssw0rd12345!"
+jwt_access_secret  = "change-this-jwt-access-secret-in-production-2026"
+jwt_refresh_secret = "change-this-jwt-refresh-secret-in-production-2026"

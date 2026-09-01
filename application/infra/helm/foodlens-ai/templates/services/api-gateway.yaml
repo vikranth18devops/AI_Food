@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-api-gateway
+  labels:
+    app: api-gateway
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.apiGateway.port }}
+      targetPort: {{ .Values.services.apiGateway.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: api-gateway

@@ -1,0 +1,77 @@
+name: Docker Build & Helm GitOps Update
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    name: Build & Push Microservices
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: api-gateway
+            dockerfile: services/api-gateway/Dockerfile
+          - name: auth-service
+            dockerfile: services/auth-service/Dockerfile
+          - name: image-service
+            dockerfile: services/image-service/Dockerfile
+          - name: food-service
+            dockerfile: services/food-service/Dockerfile
+          - name: nutrition-service
+            dockerfile: services/nutrition-service/Dockerfile
+          - name: analysis-service
+            dockerfile: services/analysis-service/Dockerfile
+          - name: recommendation-service
+            dockerfile: services/recommendation-service/Dockerfile
+          - name: frontend
+            dockerfile: apps/frontend/Dockerfile
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry (Optional)
+        if: "${{ secrets.AZURE_ACR_NAME != '' }}"
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZURE_ACR_NAME }}.azurecr.io
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.service.dockerfile }}
+          push: false
+          tags: foodlens/${{ matrix.service.name }}:${{ github.sha }}
+
+  update-helm-tag:
+    name: Update Helm Chart Tag for GitOps
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Helm values.yaml Tag
+        run: |
+          HELM_VALUES="infra/helm/foodlens-ai/values.yaml"
+          echo "Updating image.tag in $HELM_VALUES to ${{ github.sha }}"
+          sed -i 's/tag: .*/tag: "${{ github.sha }}"/' "$HELM_VALUES"
+
+      - name: Commit and Push Updated Helm Values
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(helm): auto-update image tag to ${{ github.sha }} [skip ci]"
+          file_pattern: "infra/helm/foodlens-ai/values.yaml"

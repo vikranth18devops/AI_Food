@@ -1,0 +1,17 @@
+{
+  "name": "@foodlens/shared-utils",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "../../node_modules/.bin/tsc"
+  },
+  "dependencies": {
+    "@foodlens/shared-types": "1.0.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "^5.3.3"
+  }
+}

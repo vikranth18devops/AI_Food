@@ -1,0 +1,31 @@
+name: Terraform Infrastructure CI
+
+on:
+  pull_request:
+    paths:
+      - 'infra/terraform/**'
+
+jobs:
+  terraform-plan:
+    name: Terraform Plan Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cloud: [azure, aws, gcp]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.5.7'
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: infra/terraform/${{ matrix.cloud }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: infra/terraform/${{ matrix.cloud }}

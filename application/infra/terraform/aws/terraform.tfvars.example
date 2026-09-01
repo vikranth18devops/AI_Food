@@ -1,0 +1,6 @@
+region             = "us-east-1"
+environment        = "dev"
+prefix             = "foodlens-dev"
+db_password        = "P@ssw0rd12345!"
+jwt_access_secret  = "change-this-jwt-access-secret-in-production-2026"
+jwt_refresh_secret = "change-this-jwt-refresh-secret-in-production-2026"

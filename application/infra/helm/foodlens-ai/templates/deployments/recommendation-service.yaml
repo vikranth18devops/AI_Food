@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-recommendation-service
+  labels:
+    app: recommendation-service
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.services.recommendationService.replicaCount }}
+  selector:
+    matchLabels:
+      app: recommendation-service
+  template:
+    metadata:
+      labels:
+        app: recommendation-service
+    spec:
+      containers:
+        - name: recommendation-service
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repositoryPrefix }}/recommendation-service:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.recommendationService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "foodlens-ai.fullname" . }}-config
+            - secretRef:
+                name: {{ include "foodlens-ai.fullname" . }}-secrets
+          resources:
+            {{- toYaml .Values.services.recommendationService.resources | nindent 12 }}

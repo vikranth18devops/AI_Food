@@ -1,0 +1,9 @@
+# Azure Traefik Ingress & ACR Overrides
+ingress:
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+image:
+  registry: "foodlensdevacr.azurecr.io"

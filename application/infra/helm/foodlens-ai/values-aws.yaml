@@ -1,0 +1,9 @@
+# AWS Traefik Ingress & ECR Overrides
+ingress:
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+image:
+  registry: "123456789012.dkr.ecr.us-east-1.amazonaws.com"

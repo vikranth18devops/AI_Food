@@ -1,0 +1,23 @@
+{{- if eq .Values.ingress.className "traefik" -}}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "foodlens-ai.fullname" . }}-traefik-route
+  labels:
+    {{- include "foodlens-ai.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.ingress.hosts.frontend }}`)
+      kind: Rule
+      services:
+        - name: {{ include "foodlens-ai.fullname" . }}-frontend
+          port: 80
+    - match: Host(`{{ .Values.ingress.hosts.gateway }}`)
+      kind: Rule
+      services:
+        - name: {{ include "foodlens-ai.fullname" . }}-api-gateway
+          port: 3000
+{{- end }}
